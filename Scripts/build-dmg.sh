@@ -11,10 +11,10 @@ APP_DIR="$STAGING_DIR/$APP_NAME.app"
 CONTENTS_DIR="$APP_DIR/Contents"
 
 cd "$ROOT_DIR"
-export CLANG_MODULE_CACHE_PATH="$ROOT_DIR/.build/ModuleCache"
+export CLANG_MODULE_CACHE_PATH="$WORK_DIR/ModuleCache"
 export SWIFTPM_MODULECACHE_OVERRIDE="$CLANG_MODULE_CACHE_PATH"
 
-rm -rf "$DIST_DIR" "$WORK_DIR"
+rm -rf "$DIST_DIR" "$WORK_DIR" "$ROOT_DIR/.build"
 mkdir -p "$DIST_DIR" "$CONTENTS_DIR/MacOS" "$CONTENTS_DIR/Resources" "$CLANG_MODULE_CACHE_PATH"
 
 swift build -c release

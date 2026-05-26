@@ -147,6 +147,7 @@ private struct NoteEditor: View {
     @ObservedObject var eventManager: EventManager
     let dismiss: () -> Void
     @State private var note = ""
+    @State private var didSave = false
 
     private let locale = Locale(identifier: "zh_CN")
 
@@ -171,9 +172,17 @@ private struct NoteEditor: View {
                     .font(.system(size: 12))
                     .onSubmit(save)
 
-                Button("保存", action: save)
+                Button(action: save) {
+                    HStack(spacing: 4) {
+                        if didSave {
+                            Image(systemName: "checkmark")
+                        }
+                        Text(didSave ? "已保存" : "保存")
+                    }
+                }
                     .font(.system(size: 12, weight: .semibold))
                     .buttonStyle(.borderedProminent)
+                    .tint(didSave ? .green : .accentColor)
                     .controlSize(.small)
             }
         }
@@ -182,11 +191,20 @@ private struct NoteEditor: View {
         .onAppear { note = eventManager.note(for: date) }
         .onChange(of: date) { _, newDate in
             note = eventManager.note(for: newDate)
+            didSave = false
         }
     }
 
     private func save() {
         eventManager.save(note: note, for: date)
+        withAnimation(.easeInOut(duration: 0.18)) {
+            didSave = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+            withAnimation(.easeInOut(duration: 0.18)) {
+                didSave = false
+            }
+        }
     }
 }
 

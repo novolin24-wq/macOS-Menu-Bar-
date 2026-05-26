@@ -48,9 +48,9 @@ struct DayCell: View {
 
             if hasNote && isDisplayedMonth {
                 Circle()
-                    .fill(isToday ? Color.white : Color.accentColor)
-                    .frame(width: 4, height: 4)
-                    .offset(x: -18, y: 25)
+                    .fill(Color.accentColor)
+                    .frame(width: 5, height: 5)
+                    .offset(x: -18, y: 26)
             }
         }
         .frame(maxWidth: .infinity)
