@@ -46,29 +46,21 @@ private struct AnimalMenuBarIcon: View {
     }
 
     var body: some View {
-        ZStack {
+        HStack(spacing: 3) {
             AnimalSilhouette(style: style)
-                .fill(.primary.opacity(0.1))
-                .overlay {
-                    AnimalSilhouette(style: style)
-                        .stroke(.primary.opacity(0.82), lineWidth: 0.85)
-                }
+                .fill(.primary)
+                .frame(width: glyphWidth, height: 15)
 
             Text(day)
-                .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                .font(.system(size: 12, weight: .bold, design: .rounded))
                 .monospacedDigit()
-                .offset(y: numberOffset)
         }
         .foregroundStyle(.primary)
-        .frame(width: iconWidth, height: 21)
+        .frame(height: 20)
     }
 
-    private var iconWidth: CGFloat {
-        style == .rabbit ? 25 : 24
-    }
-
-    private var numberOffset: CGFloat {
-        style == .rabbit ? 2.2 : 1.2
+    private var glyphWidth: CGFloat {
+        style == .rabbit ? 11 : 14
     }
 }
 
