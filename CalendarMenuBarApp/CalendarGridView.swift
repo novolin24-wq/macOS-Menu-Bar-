@@ -3,7 +3,6 @@ import SwiftUI
 struct CalendarGridView: View {
     let displayedMonth: Date
     let selectedDate: Date?
-    @ObservedObject var eventManager: EventManager
     let onSelect: (Date) -> Void
 
     private var calendar: Calendar {
@@ -34,8 +33,7 @@ struct CalendarGridView: View {
                         isDisplayedMonth: calendar.isDate(date, equalTo: displayedMonth, toGranularity: .month),
                         isToday: calendar.isDateInToday(date),
                         isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false,
-                        holiday: HolidayManager.shared.holiday(for: date),
-                        hasNote: eventManager.hasNote(for: date)
+                        holiday: HolidayManager.shared.holiday(for: date)
                     )
                     .onTapGesture { onSelect(date) }
                 }

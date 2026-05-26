@@ -26,10 +26,6 @@ final class EventManager: ObservableObject {
         notes[key(for: date)] ?? ""
     }
 
-    func hasNote(for date: Date) -> Bool {
-        !(notes[key(for: date)] ?? "").isEmpty
-    }
-
     func save(note: String, for date: Date) {
         let cleaned = note.trimmingCharacters(in: .whitespacesAndNewlines)
         let key = key(for: date)

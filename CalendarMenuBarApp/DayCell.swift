@@ -6,7 +6,6 @@ struct DayCell: View {
     let isToday: Bool
     let isSelected: Bool
     let holiday: HolidayEntry?
-    let hasNote: Bool
 
     private var isHoliday: Bool { holiday?.type == .holiday }
     private var isWorkday: Bool { holiday?.type == .workday }
@@ -46,12 +45,6 @@ struct DayCell: View {
                     .offset(x: 1, y: 1)
             }
 
-            if hasNote && isDisplayedMonth {
-                Circle()
-                    .fill(Color.accentColor)
-                    .frame(width: 5, height: 5)
-                    .offset(x: -18, y: 26)
-            }
         }
         .frame(maxWidth: .infinity)
         .frame(height: 55)

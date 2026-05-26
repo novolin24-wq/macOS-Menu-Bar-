@@ -14,8 +14,7 @@ struct ContentView: View {
 
             CalendarGridView(
                 displayedMonth: displayedMonth,
-                selectedDate: selectedDate,
-                eventManager: eventManager
+                selectedDate: selectedDate
             ) { date in
                 withAnimation(.spring(response: 0.24, dampingFraction: 0.88)) {
                     selectedDate = calendar.isDate(selectedDate ?? .distantPast, inSameDayAs: date) ? nil : date
@@ -68,13 +67,6 @@ struct ContentView: View {
                     HeaderButton(symbol: "chevron.left") {
                         moveMonth(by: -1)
                     }
-                    HeaderButton(symbol: "circle.fill", isSmall: true) {
-                        withAnimation(.spring(response: 0.24, dampingFraction: 0.88)) {
-                            displayedMonth = calendar.startOfMonth(containing: Date())
-                            selectedDate = Date()
-                        }
-                    }
-                    .help("回到今天")
                     HeaderButton(symbol: "chevron.right") {
                         moveMonth(by: 1)
                     }
@@ -127,14 +119,13 @@ struct ContentView: View {
 
 private struct HeaderButton: View {
     let symbol: String
-    var isSmall = false
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.system(size: isSmall ? 6 : 11, weight: .bold))
-                .foregroundStyle(isSmall ? Color.accentColor : Color.primary)
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(Color.primary)
                 .frame(width: 28, height: 28)
                 .background(.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
         }
