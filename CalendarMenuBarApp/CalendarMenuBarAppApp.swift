@@ -1,3 +1,4 @@
+import AppKit
 import Combine
 import SwiftUI
 
@@ -23,7 +24,8 @@ private struct MenuBarDateLabel: View {
     private let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        AnimalMenuBarIcon(style: style, date: now)
+        Image(nsImage: MenuBarIconRenderer.image(style: style, date: now))
+            .renderingMode(.template)
             .onReceive(timer) { now = $0 }
             .accessibilityLabel("日历，今天 \(now.formatted(.dateTime.year().month().day()))")
     }
@@ -37,105 +39,108 @@ enum AnimalStyle {
     case penguin
 }
 
-private struct AnimalMenuBarIcon: View {
-    let style: AnimalStyle
-    let date: Date
+private enum MenuBarIconRenderer {
+    static func image(style: AnimalStyle, date: Date) -> NSImage {
+        let size = NSSize(width: 28, height: 20)
+        let day = "\(Calendar.current.component(.day, from: date))" as NSString
+        let image = NSImage(size: size, flipped: false) { _ in
+            NSColor.black.setStroke()
+            let outline = animalPath(for: style)
+            outline.lineWidth = 1.7
+            outline.lineJoinStyle = .round
+            outline.lineCapStyle = .round
+            outline.stroke()
 
-    private var day: String {
-        "\(Calendar.current.component(.day, from: date))"
-    }
+            if style == .cat {
+                drawCatWhiskers()
+            }
 
-    var body: some View {
-        HStack(spacing: 3) {
-            AnimalSilhouette(style: style)
-                .fill(.primary)
-                .frame(width: glyphWidth, height: 15)
-
-            Text(day)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .monospacedDigit()
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: NSFont.monospacedDigitSystemFont(ofSize: 9.7, weight: .bold),
+                .foregroundColor: NSColor.black
+            ]
+            let textSize = day.size(withAttributes: attributes)
+            day.draw(at: NSPoint(x: (size.width - textSize.width) / 2, y: 3.2), withAttributes: attributes)
+            return true
         }
-        .foregroundStyle(.primary)
-        .frame(height: 20)
+        image.isTemplate = true
+        return image
     }
 
-    private var glyphWidth: CGFloat {
-        style == .rabbit ? 11 : 14
-    }
-}
-
-private struct AnimalSilhouette: Shape {
-    let style: AnimalStyle
-
-    func path(in rect: CGRect) -> Path {
+    private static func animalPath(for style: AnimalStyle) -> NSBezierPath {
         switch style {
         case .cat:
-            return catPath(in: rect)
+            return catPath()
         case .bear:
-            return bearPath(in: rect)
+            return bearPath()
         case .rabbit:
-            return rabbitPath(in: rect)
+            return rabbitPath()
         case .fox:
-            return foxPath(in: rect)
+            return foxPath()
         case .penguin:
-            return penguinPath(in: rect)
+            return penguinPath()
         }
     }
 
-    private func catPath(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: point(0.16, 0.40, in: rect))
-        path.addLine(to: point(0.16, 0.10, in: rect))
-        path.addLine(to: point(0.34, 0.26, in: rect))
-        path.addCurve(to: point(0.66, 0.26, in: rect), control1: point(0.42, 0.21, in: rect), control2: point(0.58, 0.21, in: rect))
-        path.addLine(to: point(0.84, 0.10, in: rect))
-        path.addLine(to: point(0.84, 0.40, in: rect))
-        path.addCurve(to: point(0.50, 0.97, in: rect), control1: point(0.92, 0.70, in: rect), control2: point(0.74, 0.97, in: rect))
-        path.addCurve(to: point(0.16, 0.40, in: rect), control1: point(0.26, 0.97, in: rect), control2: point(0.08, 0.70, in: rect))
-        path.closeSubpath()
+    private static func catPath() -> NSBezierPath {
+        let path = NSBezierPath()
+        path.move(to: NSPoint(x: 3, y: 12.5))
+        path.line(to: NSPoint(x: 3.8, y: 18))
+        path.line(to: NSPoint(x: 9, y: 15.5))
+        path.curve(to: NSPoint(x: 19, y: 15.5), controlPoint1: NSPoint(x: 11.5, y: 16.8), controlPoint2: NSPoint(x: 16.5, y: 16.8))
+        path.line(to: NSPoint(x: 24.2, y: 18))
+        path.line(to: NSPoint(x: 25, y: 12.5))
+        path.curve(to: NSPoint(x: 25.2, y: 7.2), controlPoint1: NSPoint(x: 26, y: 10.8), controlPoint2: NSPoint(x: 26, y: 8.6))
+        path.curve(to: NSPoint(x: 14, y: 1.4), controlPoint1: NSPoint(x: 23.4, y: 3.5), controlPoint2: NSPoint(x: 19, y: 1.4))
+        path.curve(to: NSPoint(x: 2.8, y: 7.2), controlPoint1: NSPoint(x: 9, y: 1.4), controlPoint2: NSPoint(x: 4.6, y: 3.5))
+        path.curve(to: NSPoint(x: 3, y: 12.5), controlPoint1: NSPoint(x: 2, y: 8.6), controlPoint2: NSPoint(x: 2, y: 10.8))
+        path.close()
         return path
     }
 
-    private func bearPath(in rect: CGRect) -> Path {
-        var path = Path()
-        path.addEllipse(in: subrect(0.06, 0.12, 0.28, 0.28, in: rect))
-        path.addEllipse(in: subrect(0.66, 0.12, 0.28, 0.28, in: rect))
-        path.addRoundedRect(in: subrect(0.12, 0.22, 0.76, 0.73, in: rect), cornerSize: CGSize(width: rect.width * 0.35, height: rect.height * 0.35))
+    private static func drawCatWhiskers() {
+        let whiskers = NSBezierPath()
+        whiskers.lineWidth = 1.15
+        whiskers.lineCapStyle = .round
+        whiskers.move(to: NSPoint(x: 2.1, y: 8.3))
+        whiskers.line(to: NSPoint(x: 0.4, y: 8.8))
+        whiskers.move(to: NSPoint(x: 2.1, y: 6.4))
+        whiskers.line(to: NSPoint(x: 0.4, y: 6.0))
+        whiskers.move(to: NSPoint(x: 25.9, y: 8.3))
+        whiskers.line(to: NSPoint(x: 27.6, y: 8.8))
+        whiskers.move(to: NSPoint(x: 25.9, y: 6.4))
+        whiskers.line(to: NSPoint(x: 27.6, y: 6.0))
+        whiskers.stroke()
+    }
+
+    private static func bearPath() -> NSBezierPath {
+        let path = NSBezierPath(ovalIn: NSRect(x: 3, y: 13, width: 6, height: 6))
+        path.appendOval(in: NSRect(x: 19, y: 13, width: 6, height: 6))
+        path.appendRoundedRect(NSRect(x: 3.5, y: 1.5, width: 21, height: 16), xRadius: 9, yRadius: 9)
         return path
     }
 
-    private func rabbitPath(in rect: CGRect) -> Path {
-        var path = Path()
-        path.addRoundedRect(in: subrect(0.20, 0.02, 0.21, 0.42, in: rect), cornerSize: CGSize(width: rect.width * 0.12, height: rect.height * 0.20))
-        path.addRoundedRect(in: subrect(0.59, 0.02, 0.21, 0.42, in: rect), cornerSize: CGSize(width: rect.width * 0.12, height: rect.height * 0.20))
-        path.addRoundedRect(in: subrect(0.10, 0.29, 0.80, 0.67, in: rect), cornerSize: CGSize(width: rect.width * 0.39, height: rect.height * 0.32))
+    private static func rabbitPath() -> NSBezierPath {
+        let path = NSBezierPath(roundedRect: NSRect(x: 7, y: 12, width: 5, height: 8), xRadius: 2.5, yRadius: 2.5)
+        path.appendRoundedRect(NSRect(x: 16, y: 12, width: 5, height: 8), xRadius: 2.5, yRadius: 2.5)
+        path.appendRoundedRect(NSRect(x: 4, y: 1.5, width: 20, height: 15), xRadius: 9, yRadius: 9)
         return path
     }
 
-    private func foxPath(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: point(0.08, 0.12, in: rect))
-        path.addLine(to: point(0.37, 0.27, in: rect))
-        path.addCurve(to: point(0.63, 0.27, in: rect), control1: point(0.44, 0.22, in: rect), control2: point(0.56, 0.22, in: rect))
-        path.addLine(to: point(0.92, 0.12, in: rect))
-        path.addLine(to: point(0.80, 0.64, in: rect))
-        path.addCurve(to: point(0.50, 0.98, in: rect), control1: point(0.72, 0.85, in: rect), control2: point(0.60, 0.98, in: rect))
-        path.addCurve(to: point(0.20, 0.64, in: rect), control1: point(0.40, 0.98, in: rect), control2: point(0.28, 0.85, in: rect))
-        path.closeSubpath()
+    private static func foxPath() -> NSBezierPath {
+        let path = NSBezierPath()
+        path.move(to: NSPoint(x: 3, y: 18))
+        path.line(to: NSPoint(x: 10, y: 15))
+        path.line(to: NSPoint(x: 18, y: 15))
+        path.line(to: NSPoint(x: 25, y: 18))
+        path.line(to: NSPoint(x: 22, y: 6))
+        path.line(to: NSPoint(x: 14, y: 1.5))
+        path.line(to: NSPoint(x: 6, y: 6))
+        path.close()
         return path
     }
 
-    private func penguinPath(in rect: CGRect) -> Path {
-        var path = Path()
-        path.addEllipse(in: subrect(0.15, 0.05, 0.70, 0.91, in: rect))
-        return path
-    }
-
-    private func point(_ x: CGFloat, _ y: CGFloat, in rect: CGRect) -> CGPoint {
-        CGPoint(x: rect.minX + rect.width * x, y: rect.minY + rect.height * y)
-    }
-
-    private func subrect(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat, in rect: CGRect) -> CGRect {
-        CGRect(x: rect.minX + rect.width * x, y: rect.minY + rect.height * y, width: rect.width * width, height: rect.height * height)
+    private static func penguinPath() -> NSBezierPath {
+        NSBezierPath(ovalIn: NSRect(x: 4, y: 1, width: 20, height: 18))
     }
 }
