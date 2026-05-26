@@ -41,12 +41,12 @@ enum AnimalStyle {
 
 private enum MenuBarIconRenderer {
     static func image(style: AnimalStyle, date: Date) -> NSImage {
-        let size = NSSize(width: 28, height: 20)
+        let size = NSSize(width: 23, height: 17)
         let day = "\(Calendar.current.component(.day, from: date))" as NSString
         let image = NSImage(size: size, flipped: false) { _ in
             NSColor.black.setStroke()
             let outline = animalPath(for: style)
-            outline.lineWidth = 1.7
+            outline.lineWidth = 1.35
             outline.lineJoinStyle = .round
             outline.lineCapStyle = .round
             outline.stroke()
@@ -56,11 +56,11 @@ private enum MenuBarIconRenderer {
             }
 
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: NSFont.monospacedDigitSystemFont(ofSize: 9.7, weight: .bold),
+                .font: NSFont.monospacedDigitSystemFont(ofSize: 8.3, weight: .bold),
                 .foregroundColor: NSColor.black
             ]
             let textSize = day.size(withAttributes: attributes)
-            day.draw(at: NSPoint(x: (size.width - textSize.width) / 2, y: 3.2), withAttributes: attributes)
+            day.draw(at: NSPoint(x: (size.width - textSize.width) / 2, y: 2.7), withAttributes: attributes)
             return true
         }
         image.isTemplate = true
@@ -84,32 +84,32 @@ private enum MenuBarIconRenderer {
 
     private static func catPath() -> NSBezierPath {
         let path = NSBezierPath()
-        path.move(to: NSPoint(x: 3, y: 12.5))
-        path.line(to: NSPoint(x: 3.8, y: 18))
-        path.line(to: NSPoint(x: 9, y: 15.5))
-        path.curve(to: NSPoint(x: 19, y: 15.5), controlPoint1: NSPoint(x: 11.5, y: 16.8), controlPoint2: NSPoint(x: 16.5, y: 16.8))
-        path.line(to: NSPoint(x: 24.2, y: 18))
-        path.line(to: NSPoint(x: 25, y: 12.5))
-        path.curve(to: NSPoint(x: 25.2, y: 7.2), controlPoint1: NSPoint(x: 26, y: 10.8), controlPoint2: NSPoint(x: 26, y: 8.6))
-        path.curve(to: NSPoint(x: 14, y: 1.4), controlPoint1: NSPoint(x: 23.4, y: 3.5), controlPoint2: NSPoint(x: 19, y: 1.4))
-        path.curve(to: NSPoint(x: 2.8, y: 7.2), controlPoint1: NSPoint(x: 9, y: 1.4), controlPoint2: NSPoint(x: 4.6, y: 3.5))
-        path.curve(to: NSPoint(x: 3, y: 12.5), controlPoint1: NSPoint(x: 2, y: 8.6), controlPoint2: NSPoint(x: 2, y: 10.8))
+        path.move(to: NSPoint(x: 2.6, y: 10.8))
+        path.line(to: NSPoint(x: 3.2, y: 15.4))
+        path.line(to: NSPoint(x: 7.6, y: 13.2))
+        path.curve(to: NSPoint(x: 15.4, y: 13.2), controlPoint1: NSPoint(x: 9.4, y: 14.2), controlPoint2: NSPoint(x: 13.6, y: 14.2))
+        path.line(to: NSPoint(x: 19.8, y: 15.4))
+        path.line(to: NSPoint(x: 20.4, y: 10.8))
+        path.curve(to: NSPoint(x: 20.6, y: 6.1), controlPoint1: NSPoint(x: 21.3, y: 9.4), controlPoint2: NSPoint(x: 21.3, y: 7.4))
+        path.curve(to: NSPoint(x: 11.5, y: 1.2), controlPoint1: NSPoint(x: 19.1, y: 3.1), controlPoint2: NSPoint(x: 15.6, y: 1.2))
+        path.curve(to: NSPoint(x: 2.4, y: 6.1), controlPoint1: NSPoint(x: 7.4, y: 1.2), controlPoint2: NSPoint(x: 3.9, y: 3.1))
+        path.curve(to: NSPoint(x: 2.6, y: 10.8), controlPoint1: NSPoint(x: 1.7, y: 7.4), controlPoint2: NSPoint(x: 1.7, y: 9.4))
         path.close()
         return path
     }
 
     private static func drawCatWhiskers() {
         let whiskers = NSBezierPath()
-        whiskers.lineWidth = 1.15
+        whiskers.lineWidth = 0.95
         whiskers.lineCapStyle = .round
-        whiskers.move(to: NSPoint(x: 2.1, y: 8.3))
-        whiskers.line(to: NSPoint(x: 0.4, y: 8.8))
-        whiskers.move(to: NSPoint(x: 2.1, y: 6.4))
-        whiskers.line(to: NSPoint(x: 0.4, y: 6.0))
-        whiskers.move(to: NSPoint(x: 25.9, y: 8.3))
-        whiskers.line(to: NSPoint(x: 27.6, y: 8.8))
-        whiskers.move(to: NSPoint(x: 25.9, y: 6.4))
-        whiskers.line(to: NSPoint(x: 27.6, y: 6.0))
+        whiskers.move(to: NSPoint(x: 2.0, y: 7.2))
+        whiskers.line(to: NSPoint(x: 0.5, y: 7.6))
+        whiskers.move(to: NSPoint(x: 2.0, y: 5.7))
+        whiskers.line(to: NSPoint(x: 0.5, y: 5.4))
+        whiskers.move(to: NSPoint(x: 21.0, y: 7.2))
+        whiskers.line(to: NSPoint(x: 22.5, y: 7.6))
+        whiskers.move(to: NSPoint(x: 21.0, y: 5.7))
+        whiskers.line(to: NSPoint(x: 22.5, y: 5.4))
         whiskers.stroke()
     }
 
