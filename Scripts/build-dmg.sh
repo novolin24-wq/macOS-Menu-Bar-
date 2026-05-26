@@ -25,7 +25,7 @@ cp "$ROOT_DIR/Packaging/Info.plist" "$CONTENTS_DIR/Info.plist"
 cp "$ROOT_DIR/CalendarMenuBarApp/Resources/holidays.json" "$CONTENTS_DIR/Resources/holidays.json"
 
 ICONSET_DIR="$WORK_DIR/AppIcon.iconset"
-swift "$ROOT_DIR/Scripts/CreateIcon.swift" "$ICONSET_DIR"
+swift "$ROOT_DIR/Scripts/CreateIcon.swift" "$ROOT_DIR/Packaging/AppIconMaster.png" "$ICONSET_DIR"
 iconutil -c icns "$ICONSET_DIR" -o "$CONTENTS_DIR/Resources/AppIcon.icns"
 
 xattr -cr "$APP_DIR"
